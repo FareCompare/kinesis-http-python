@@ -21,7 +21,7 @@ elbPath = 'SabreSearch.avsc'
 with open(elbPath, 'r') as f:
     schema_string = f.read() 
     sabreSearch = avro.schema.Parse(schema_string)
-å
+
 # Pre-load the Snappy decompression library
 snappy_preload = snappy.uncompress(b'\x00')
 
