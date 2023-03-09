@@ -8,7 +8,7 @@ The server needs a https server running for it to get the data from firehose.
 
 ## Setup ##
 ``` 
-pip install -r requirements 
+pip install -r requirements.txt
 python application.py
 ```
 
