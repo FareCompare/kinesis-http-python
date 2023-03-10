@@ -63,23 +63,24 @@ def index():
 
 @application.route('/ingest', methods=['POST'])
 def handle_firehose_message():
-    #Load data from request
-    request_data = request.data
-    
+    #Uncompress the data
+    data_dict = uncompressRequest(request.data)
+
+    #Set the requestID from the payload
+    requestId = data_dict['requestId']
+    #Set the timestamp from the payload 
+    timestamp = data_dict['timestamp']
     #Set response saying data was received
-    response_text = "data sucessfully received"
+
+        #Return the response as JSON
+    response_json = {
+        "requestId": requestId,
+        "timestamp": timestamp
+    }
 
     #Use on_response_close to run the mapping and decompression after the response has been sent
     def on_response_close():
         logging.info("Uncompressing request")
-
-        #Uncompress the data
-        data_dict = uncompressRequest(request_data)
-
-        #Set the requestID from the payload
-        requestId = data_dict['requestId']
-        #Set the timestamp from the payload 
-        timestamp = data_dict['timestamp']
 
         #Set the records from the payload
         records = data_dict['records']
@@ -91,7 +92,7 @@ def handle_firehose_message():
         logging.info(f"Request ID: {requestId}, Timestamp: {timestamp}, Number of records pre decompression and extraction: {len(records)}, Number of converted records {len(avroObjects)}")
 
     #Set the response text
-    response = make_response(response_text)
+    response = make_response(response_json)
 
     #Set the call_on_close to run the data mapping
     response.call_on_close(on_response_close)
